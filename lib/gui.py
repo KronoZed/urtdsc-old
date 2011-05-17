@@ -17,13 +17,15 @@ class MainWindow(wx.Frame):
         aboutw = hm.Append(wx.ID_ABOUT, "A&bout")
         self.Bind(wx.EVT_MENU, self.aboutw, aboutw)
         
-        #Listbox with available self.demos
         self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 568),style=wx.LB_SINGLE | wx.LB_SORT)
-        path = os.path.expanduser('~/.q3a/q3ut4/demos')
-        for demo in os.listdir(path):
-            self.demos.Insert(demo, 0)
-        self.demos.Bind(wx.EVT_LISTBOX, self.OnSelect, id=26)
-
+        try:
+            path = os.path.expanduser('~/.q3a/q3ut4/demos')
+            for demo in os.listdir(path):
+                self.demos.Insert(demo, 0)
+            self.demos.Bind(wx.EVT_LISTBOX, self.OnSelect, id=26)
+        except:
+            self.nodemosfound()
+            
         self.dateplayed = wx.StaticText(self.panel, -1, 'Date played: ', pos=(205, 5))
         self.nickname = wx.StaticText(self.panel, -1, 'Nickname: ', pos=(205, 25))
         self.sshotaddr = wx.StaticText(self.panel, -1, "Screenshot:", pos=(205, 65))
@@ -31,6 +33,10 @@ class MainWindow(wx.Frame):
         self.screenshot = wx.StaticBitmap(self.panel, -1, pos=(205, 105), bitmap=wx.EmptyBitmap(550, 400))
         sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)
+        if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/screenshots')):
+            pass
+        else:
+            self.nosshotsfound()
         
         menubar = wx.MenuBar()
         menubar.Append(fm, "&File")
@@ -58,12 +64,23 @@ class MainWindow(wx.Frame):
         c.SetLabel(label='Screenshot: \n' + str((func.demoscreen(d))))
         print "Screenshot: " + str(func.demoscreen(d))
         try:
-            sshot = wx.Image(func.demoscreen(d),wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-            self.screenshot.SetBitmap(sshot)
+            if str(func.demoscreen(d)) != "None":
+                sshot = wx.Image(func.demoscreen(d),wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                self.screenshot.SetBitmap(sshot)
+            else:
+                sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
+                self.screenshot.SetBitmap(sshot)
         except:
-            sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
-            self.screenshot.SetBitmap(sshot)
+            pass
         #TODO: Скриншоты
+    
+    def nodemosfound(self):
+        achtung = wx.MessageDialog(None, 'Demos not found', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
+        achtung.ShowModal()
+        
+    def nosshotsfound(self):
+        achtung = wx.MessageDialog(None, 'Screenshots not found', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
+        achtung.ShowModal()
 
 class AboutWindowFrame(wx.Frame):
     def __init__(self, parent):
