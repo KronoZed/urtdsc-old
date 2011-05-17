@@ -29,6 +29,8 @@ class MainWindow(wx.Frame):
         self.sshotaddr = wx.StaticText(self.panel, -1, "Screenshot:", pos=(205, 65))
         
         self.screenshot = wx.StaticBitmap(self.panel, -1, pos=(205, 105), bitmap=wx.EmptyBitmap(550, 400))
+        sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
+        self.screenshot.SetBitmap(sshot)
         
         menubar = wx.MenuBar()
         menubar.Append(fm, "&File")
@@ -55,8 +57,12 @@ class MainWindow(wx.Frame):
         b.SetLabel(label='Nickname: ' + func.demonick(d))
         c.SetLabel(label='Screenshot: \n' + str((func.demoscreen(d))))
         print "Screenshot: " + str(func.demoscreen(d))
-        sshot = wx.Image(func.demoscreen(d),wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-        self.screenshot.SetBitmap(sshot)
+        try:
+            sshot = wx.Image(func.demoscreen(d),wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+            self.screenshot.SetBitmap(sshot)
+        except:
+            sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
+            self.screenshot.SetBitmap(sshot)
         #TODO: Скриншоты
 
 class AboutWindowFrame(wx.Frame):
