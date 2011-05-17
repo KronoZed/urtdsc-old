@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os, sys, wx, func
-import wx.lib.mixins.listctrl as listmix
+from wx.lib.wordwrap import wordwrap
+#import wx.lib.mixins.listctrl as listmix
 
 class MainWindow(wx.Frame):
     def __init__(self, parent):
@@ -15,7 +16,7 @@ class MainWindow(wx.Frame):
         
         hm = wx.Menu()
         aboutw = hm.Append(wx.ID_ABOUT, "A&bout")
-        self.Bind(wx.EVT_MENU, self.aboutw, aboutw)
+        self.Bind(wx.EVT_MENU, self.AboutDlg, aboutw)
         
         self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 568),style=wx.LB_SINGLE | wx.LB_SORT)
         try:
@@ -82,28 +83,18 @@ class MainWindow(wx.Frame):
         achtung = wx.MessageDialog(None, 'Screenshots not found', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
         achtung.ShowModal()
 
-class AboutWindowFrame(wx.Frame):
-    def __init__(self, parent):
-        wx.Frame.__init__(self, parent, title="About UrTDSC", size=(400, 250))
-        AboutWindowFrame.SetSizeHints(self, 400, 250, 400, 250)
-        panel = wx.Panel(self, -1)
-        
-        abouttext1 = 'Urban Terror Demo-Screenshot C0nc4t3n4t0r'
-        abouttext1font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, False)
-        text1 = wx.StaticText(panel, -1, abouttext1, (15, 5), (300, -1), wx.ALIGN_CENTER)   
-        text1.SetFont(abouttext1font)
-        abouttext2 = 'Version 0.1-alpha'
-        wx.StaticText(panel, -1, abouttext2, (140, 25), (300, -1), wx.ALIGN_CENTER)
-        
-        wx.Button(panel, 1, 'Close', (160, 200))
-        self.Bind(wx.EVT_BUTTON, self.CloseAbw, id=1)
-        
-        self.CenterOnParent()
-        self.Show(True)
-        print "* About Window - success"
-        
-    def CloseAbw(self, event):
-        self.Close(True)
-        print "* About Window - closed"
+    def AboutDlg(self, event):
+        info = wx.AboutDialogInfo()
+        info.Name = "Urban Terror Demo-Screenshot C0nc4t3n4t0r"
+        info.Version = "0.2-dev"
+        info.Copyright = "(C) 2011, Stanislav N. aka p0z1tr0n"
+        info.Description = wordwrap(
+            "This tool is intended for concatenate demos and screenshots of Urban Terror game. It shows demos list, date the demo was recorded, player nickname used and screenshot.",
+            1000, wx.ClientDC(self.panel))
+        info.WebSite = ("http://code.google.com/p/urtdsc/", "Google Code page")
+        info.Developers = ["Stanislav N. aka pztrn (pztrn@pztrn.ru)"]
+        info.License = wordwrap("* Beerware - it means next: if you like this software then by me a beer! \n*GNU GPL v3", 500, wx.ClientDC(self.panel))
+        # Show the wx.AboutBox
+        wx.AboutBox(info)
 
 #TODO: переписать ListBox как ListCtrl
