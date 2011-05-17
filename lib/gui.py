@@ -93,7 +93,7 @@ class MainWindow(wx.Frame):
             1000, wx.ClientDC(self.panel))
         info.WebSite = ("http://code.google.com/p/urtdsc/", "Google Code page")
         info.Developers = ["Stanislav N. aka pztrn (pztrn@pztrn.ru)"]
-        info.License = wordwrap("* Beerware - it means next: if you like this software then by me a beer! \n*GNU GPL v3", 500, wx.ClientDC(self.panel))
+        info.License = wordwrap("* Beerware - it means next: if you like this software then buy me a beer! \n*GNU GPL v3", 500, wx.ClientDC(self.panel))
         # Show the wx.AboutBox
         wx.AboutBox(info)
 
