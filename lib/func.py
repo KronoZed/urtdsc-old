@@ -6,7 +6,7 @@ spath = os.path.expanduser('~/.q3a/q3ut4/screenshots/')
 
 def demodate(d):
     try:
-        date = time.strftime("%e %B %Y @ %H:%M",time.localtime(os.path.getmtime(path+d)))
+        date = time.strftime("%m-%d-%Y @ %H:%M",time.localtime(os.path.getmtime(path+d)))
         print "[func] Date for", d + ": ", date
         return str(date)
     except:
@@ -31,8 +31,10 @@ def demonick(d):
     except:
         return "None"
 
-def demomap(d):
-    pass
+def demoname(timed):
+    for demo in os.listdir(path):
+        if timed == demodate(demo):
+            return demo
 
 def demoscreen(d):
     try:
