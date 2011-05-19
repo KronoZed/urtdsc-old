@@ -19,7 +19,7 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         self.Bind(wx.EVT_MENU, self.AboutDlg, aboutw)
         
         #Listbox with available self.demos
-        self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 568),style=wx.LB_SINGLE)
+        self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 571),style=wx.LB_SINGLE)
                 
         try:
             path = os.path.expanduser('~/.q3a/q3ut4/demos')
@@ -43,6 +43,11 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         self.screenshot = wx.StaticBitmap(self.panel, -1, pos=(205, 105), bitmap=wx.EmptyBitmap(550, 400))
         sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)
+        
+        wx.StaticBox(self.panel, -1, pos=(205, 500), size=(550, 60))
+        wx.Button(self.panel, -1, "Create archives...", pos=(213, 518))
+        wx.Button(self.panel, -1, "Other screenshots...", pos=(610, 518))
+        
         if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/screenshots')):
             pass
             nosshots = '0'
@@ -72,6 +77,7 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         
     def OnSelect(self, event):
         index = event.GetSelection()
+        #global timed
         timed = self.demos.GetString(index)
         a = self.demoname
         b = self.nickname
@@ -115,5 +121,3 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         info.Developers = ["* Stanislav N. aka pztrn (pztrn@pztrn.ru) - project\nstarter and main developer"]
         info.License = wordwrap("* Beerware - it means next: if you like this software then buy me a beer! \n* GNU GPL v3", 500, wx.ClientDC(self.panel))
         wx.AboutBox(info)
-
-#TODO: переписать ListBox как ListCtrl
