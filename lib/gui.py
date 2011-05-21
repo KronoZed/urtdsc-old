@@ -18,7 +18,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.aboutw, aboutw)
         
         #Listbox with available self.demos
-        self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 568),style=wx.LB_SINGLE | wx.LB_SORT)
+        self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 568), style=wx.LB_SINGLE | wx.LB_SORT)
         path = os.path.expanduser('~/.q3a/q3ut4/demos')
         for demo in os.listdir(path):
             self.demos.Insert(demo, 0)
@@ -55,7 +55,7 @@ class MainWindow(wx.Frame):
         b.SetLabel(label='Nickname: ' + func.demonick(d))
         c.SetLabel(label='Screenshot: \n' + str((func.demoscreen(d))))
         print "Screenshot: " + str(func.demoscreen(d))
-        sshot = wx.Image(func.demoscreen(d),wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        sshot = wx.Image(func.demoscreen(d), wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)
         #TODO: Скриншоты
 

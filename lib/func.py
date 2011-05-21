@@ -5,12 +5,12 @@ path = os.path.expanduser('~/.q3a/q3ut4/demos/')
 spath = os.path.expanduser('~/.q3a/q3ut4/screenshots/')
 
 def demodate(d):
-    date = time.strftime("%e %B %Y @ %H:%M",time.localtime(os.path.getmtime(path+d)))
+    date = time.strftime("%e %B %Y @ %H:%M", time.localtime(os.path.getmtime(path + d)))
     print "[func] Date for", d + ": ", date
     return str(date)
 
 def demonick(d):
-    os.system('echo '+d+' > 1')
+    os.system('echo ' + d + ' > 1')
     n = commands.getoutput("cat 1 | awk -F '_' {' print $7 '}")
     n1 = commands.getoutput("cat 1 | awk -F '_' {' print $8 '}")
     n2 = commands.getoutput("cat 1 | awk -F '_' {' print $9 '}")
@@ -29,21 +29,21 @@ def demomap(d):
     pass
 
 def demoscreen(d):
-    dday = time.strftime("%d",time.localtime(os.path.getmtime(path+d))).lstrip('0')
-    dmonth = time.strftime("%m",time.localtime(os.path.getmtime(path+d))).lstrip('0')
-    dhour = time.strftime("%H",time.localtime(os.path.getmtime(path+d))).lstrip('0')
-    dmin = time.strftime("%M",time.localtime(os.path.getmtime(path+d))).lstrip('0')
+    dday = time.strftime("%d", time.localtime(os.path.getmtime(path + d))).lstrip('0')
+    dmonth = time.strftime("%m", time.localtime(os.path.getmtime(path + d))).lstrip('0')
+    dhour = time.strftime("%H", time.localtime(os.path.getmtime(path + d))).lstrip('0')
+    dmin = time.strftime("%M", time.localtime(os.path.getmtime(path + d))).lstrip('0')
     screenpath = os.listdir(spath)
     for screen in screenpath:
-        sday = time.strftime("%d",time.localtime(os.path.getmtime(spath+screen))).lstrip('0')
-        smonth = time.strftime("%m",time.localtime(os.path.getmtime(spath+screen))).lstrip('0')
-        shour = time.strftime("%H",time.localtime(os.path.getmtime(spath+screen))).lstrip('0')
-        smin = time.strftime("%M",time.localtime(os.path.getmtime(spath+screen))).lstrip('0')
+        sday = time.strftime("%d", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
+        smonth = time.strftime("%m", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
+        shour = time.strftime("%H", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
+        smin = time.strftime("%M", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
         if dday == sday:
             if dmonth == smonth:
                 if dhour == shour:
                     if dmin == smin:
-                        scr = spath+screen
+                        scr = spath + screen
                         if scr:
                             return str(scr)
                         else:
