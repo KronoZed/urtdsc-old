@@ -2,9 +2,8 @@
 
 import os, sys, wx, func, platform
 from wx.lib.wordwrap import wordwrap
-from wx.lib.mixins.listctrl import ColumnSorterMixin
 
-class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
+class MainWindow(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, title="Urban Terror Demo-Screenshot C0nc4t3n4t0r", size=(800, 600))
         MainWindow.SetSizeHints(self, 800, 600, 800, 600)
@@ -19,7 +18,7 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         self.Bind(wx.EVT_MENU, self.AboutDlg, aboutw)
         
         #Listbox with available self.demos
-        self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 571),style=wx.LB_SINGLE)
+        self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 571), style=wx.LB_SINGLE)
                 
         try:
             path = os.path.expanduser('~/.q3a/q3ut4/demos')
@@ -59,7 +58,7 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
             pass
         else:
             self.nothingfound()
-        
+                    
         menubar = wx.MenuBar()
         menubar.Append(fm, "&File")
         menubar.Append(hm, "&Help")
@@ -72,9 +71,6 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         print ">> Exiting urtdsc..."
         self.Close(True)
 
-    def aboutw(self, event):
-        abw = AboutWindowFrame(None)
-        
     def OnSelect(self, event):
         index = event.GetSelection()
         #global timed
@@ -88,7 +84,7 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
         print "Screenshot: " + str(func.demoscreen(func.demoname(timed)))
         try:
             if str(func.demoscreen(func.demoname(timed))) != "None":
-                sshot = wx.Image(func.demoscreen(func.demoname(timed)),wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                sshot = wx.Image(func.demoscreen(func.demoname(timed)), wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
             else:
                 sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
@@ -107,7 +103,7 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
     def nothingfound(self):
         nf = wx.MessageDialog(None, 'No screenshots or demos found.\nWill now exit.', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
         nf.ShowModal()
-        exit(255)
+        sys.exit(255)
 
     def AboutDlg(self, event):
         info = wx.AboutDialogInfo()
@@ -118,6 +114,6 @@ class MainWindow(wx.Frame, wx.lib.mixins.listctrl.ColumnSorterMixin):
             "This tool is intended for concatenate demos and screenshots of Urban Terror game. It shows demos list, date the demo was recorded, player nickname used and a screenshot.\n\nPython version: " + str(platform.python_version()) + "\nwxWidgets version: " + str(wx.version()),
             1000, wx.ClientDC(self.panel))
         info.WebSite = ("http://code.google.com/p/urtdsc/", "Google Code page")
-        info.Developers = ["* Stanislav N. aka pztrn (pztrn@pztrn.ru) - project\nstarter and main developer"]
+        info.Developers = ["* Stanislav N. aka pztrn (pztrn@pztrn.ru) - project starter and main developer", "* archlinux@java (drakmail@gmail.com) - help, help, help"]
         info.License = wordwrap("* Beerware - it means next: if you like this software then buy me a beer! \n* GNU GPL v3", 500, wx.ClientDC(self.panel))
         wx.AboutBox(info)
