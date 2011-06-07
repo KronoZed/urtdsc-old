@@ -1,13 +1,14 @@
-import os, time
+import os, time, gui, datetime
 
 #Variables
 path = os.path.expanduser('~/.q3a/q3ut4/demos/')
 spath = os.path.expanduser('~/.q3a/q3ut4/screenshots/')
 
-def demodate(d):
+def demodate(demo):
     try:
-        date = time.strftime("%m-%d-%Y @ %H:%M", time.localtime(os.path.getmtime(path + d)))
-        print "[func] Date for", d + ": ", date
+        date = time.strftime('%d-%m-%Y @ %H:%M', time.localtime(os.path.getmtime(path + demo)))
+        if gui.DEBUG == '2':
+            print "[D2][func] Date:", date
         return str(date)
     except:
         return "None"
@@ -31,9 +32,16 @@ def demonick(d):
         return "None"
 
 def demoname(timed):
+    if gui.DEBUG == 1:
+        print "[func] Received demo time:", timed
     for demo in os.listdir(path):
+        if gui.DEBUG == '2':
+            print "[D2][func] Demo:", demo
         if timed == demodate(demo):
             return demo
+        else:
+            pass
+
 
 def demoscreen(d):
     try:
