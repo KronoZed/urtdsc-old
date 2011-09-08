@@ -1,17 +1,28 @@
-import os, time, gui, datetime
+import os, time, config, datetime
 
 #Variables
 path = os.path.expanduser('~/.q3a/q3ut4/demos/')
 spath = os.path.expanduser('~/.q3a/q3ut4/screenshots/')
+screenpath = os.listdir(spath)
 
 def demodate(demo):
     try:
         date = time.strftime('%d-%m-%Y @ %H:%M', time.localtime(os.path.getmtime(path + demo)))
-        if gui.DEBUG == '2':
+        if config.DEBUG == '2':
             print "[D2][func] Date:", date
         return str(date)
     except:
         return "None"
+    
+def demorealdate(demo):
+    realdate = os.path.getmtime(path + demo)
+    #print "Real Date:", realdate
+    return realdate
+
+def screenrealdate(screen):
+    realdate = os.path.getmtime(spath + screen)
+    #print "Real Date:", realdate
+    return realdate
 
 def demonick(d):
     try:
@@ -32,10 +43,10 @@ def demonick(d):
         return "None"
 
 def demoname(timed):
-    if gui.DEBUG == 1:
+    if config.DEBUG == '2':
         print "[func] Received demo time:", timed
     for demo in os.listdir(path):
-        if gui.DEBUG == '2':
+        if config.DEBUG == '2':
             print "[D2][func] Demo:", demo
         if timed == demodate(demo):
             return demo
@@ -49,7 +60,6 @@ def demoscreen(d):
         dmonth = time.strftime("%m", time.localtime(os.path.getmtime(path + d))).lstrip('0')
         dhour = time.strftime("%H", time.localtime(os.path.getmtime(path + d))).lstrip('0')
         dmin = time.strftime("%M", time.localtime(os.path.getmtime(path + d))).lstrip('0')
-        screenpath = os.listdir(spath)
         for screen in screenpath:
             sday = time.strftime("%d", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
             smonth = time.strftime("%m", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
@@ -66,3 +76,12 @@ def demoscreen(d):
                                 return None
     except:
         return "None"
+
+def demoscreens(demoname):
+    scraddr = []
+    for screen in screenpath:
+        #scrtimerange = datetime.datetime.fromtimestamp(os.path.getmtime(path + demoname)) - datetime.timedelta(minutes=40)
+        if screenrealdate(screen) > demorealdate(demoname) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 40:
+            scr = spath + screen
+            scraddr.append(scr)
+    return scraddr

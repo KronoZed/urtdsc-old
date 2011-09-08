@@ -3,8 +3,14 @@
 import os, sys, wx, func, platform, glob, time, config
 from wx.lib.wordwrap import wordwrap
 
-# Temporary variables
-DEBUG = config.DEBUG
+# Set some variables
+try:
+    if config.DEBUG:
+        DEBUG = config.DEBUG
+except:
+    DEBUG = '0'
+    
+scraddr = []
 
 class MainWindow(wx.Frame):
     def __init__(self, parent):
@@ -73,11 +79,11 @@ class MainWindow(wx.Frame):
         self.CenterOnParent()
         self.Show(True)
         print '* Debug is:', DEBUG
-        if config.DEBUG in ('1', '2'):
+        if DEBUG in ('1', '2'):
             print "* Main window - success"
         
     def exitapp(self, event):
-        if config.DEBUG in ('1', '2'):
+        if DEBUG in ('1', '2'):
             print ">> Exiting urtdsc..."
         self.Close(True)
 
@@ -85,23 +91,26 @@ class MainWindow(wx.Frame):
         index = event.GetSelection()
         global timed
         timed = self.demos.GetString(index)
+        #systimed = func.demorealdate(func.demoname(timed))
         a = self.demoname
         b = self.nickname
         c = self.sshotaddr
-        if config.DEBUG in ('1', '2'):
+        if DEBUG in ('1', '2'):
             print "[to func] Sending demo time:", timed
         a.SetLabel(label='Demo name: ' + func.demoname(timed))
         b.SetLabel(label='Nickname: ' + func.demonick(func.demoname(timed)))
-        c.SetLabel(label='Screenshot: \n' + str((func.demoscreen(func.demoname(timed)))))
-        if config.DEBUG in ('1', '2'):
-            print "* Screenshot: " + str(func.demoscreen(func.demoname(timed)))
+        c.SetLabel(label='Screenshot: \n' + str(func.demoscreens(func.demoname(timed))[0]))
+        if DEBUG in ('1', '2'):
+            print "* Screenshot: " + str(func.demoscreens(func.demoname(timed))[0])
         try:
-            if str(func.demoscreen(func.demoname(timed))) != "None":
-                sshot = wx.Image(func.demoscreen(func.demoname(timed)), wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+            if str(func.demoscreens(func.demoname(timed))) != None or str(func.demoscreens(func.demoname(timed))) != "None":
+                print func.demoscreens(func.demoname(timed))[0]
+                sshot = wx.Image(func.demoscreens(func.demoname(timed))[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
             else:
                 sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
+                print "Can't set screen!"
         except:
             pass
     
@@ -131,7 +140,7 @@ class MainWindow(wx.Frame):
         info.Description = wordwrap(
             "This tool is intended for concatenate demos and screenshots of Urban Terror game. It shows demos list, date the demo was recorded, player nickname used and a screenshot.\n\nPython version: " + str(platform.python_version()) + "\nwxWidgets version: " + str(wx.version()),
             1000, wx.ClientDC(self.panel))
-        info.WebSite = ("http://redmine.pztrn.ru/projects/urtdsc", "Project Page")
+        info.WebSite = ("http://code.google.com/p/urtdsc/", "Project Page")
         info.Developers = ["* Stanislav N. aka pztrn (pztrn@pztrn.ru) - project starter and main developer", "* archlinux@java (drakmail@gmail.com) - help, help, help"]
         info.License = wordwrap("* Beerware - it means next: if you like this software then buy me a beer! \n* GNU GPL v3 or higher", 500, wx.ClientDC(self.panel))
         wx.AboutBox(info)
@@ -142,12 +151,16 @@ class OtherScreens(wx.Frame):
         OtherScreens.SetSizeHints(self, 700, 450, 700, 450)
         self.panel = wx.Panel(self, -1)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
+        print scraddr
         
         try:
             # Screenshots list
-            self.screenlist = wx.ListCtrl(self.panel, size=(155,452), style=wx.LC_REPORT)
+            self.screenlist = wx.ListCtrl(self.panel, size=(155,390), style=wx.LC_REPORT)
             self.screenlist.InsertColumn(0, 'Screenshot', width=155)
             self.screenlist.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnSelect)
+            
+            # Lonely button :-)
+            wx.Button(self.panel, -1, "Copy Screenshot to\nDesktop", pos=(10, 396))
             
             #Screenshot
             self.screenshot = wx.StaticBitmap(self.panel, -1, pos=(156, 0), bitmap=wx.EmptyBitmap(544, 452))
@@ -155,38 +168,48 @@ class OtherScreens(wx.Frame):
             self.screenshot.SetBitmap(sshot)
         
             self.sslist = wx.ImageList(150, 150)
-            if config.DEBUG in ('1', '2'):
+            if DEBUG in ('1', '2'):
                 print '* Demo date is:', timed
             #i = wx.Image(func.demoscreen(demoname), wx.BITMAP_TYPE_JPEG).Scale(150, 150, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-            i = func.demoscreen(func.demoname(timed))
-            self.sslist.Add(wx.Bitmap(i))
-            self.sslist1 = self.screenlist.SetImageList(self.sslist, wx.IMAGE_LIST_SMALL)
-            self.idx = 1
-            self.index = self.screenlist.InsertStringItem(self.idx, '', self.idx)
-            self.screenlist.SetItemImage(1, self.index, self.index)
+            #i = func.demoscreen(func.demoname(timed))
             
+            self.scrlist = func.demoscreens(func.demoname(timed))
+            index = 0
+            self.idx = 0
+            for i in self.scrlist:
+                scr1 = wx.Image(i, wx.BITMAP_TYPE_JPEG).Scale(150, 150, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                self.sslist.Add(scr1)
+                self.index = self.screenlist.InsertStringItem(self.idx, '', self.idx)
+                self.screenlist.SetItemImage(1, self.index, self.index)
+                self.screenlist.SetItemData(self.index, index)
+                index = index + 1
+                self.idx = self.idx + 1
+            
+            self.sslist1 = self.screenlist.SetImageList(self.sslist, wx.IMAGE_LIST_SMALL)
 
             self.CenterOnParent()
             self.Show(True)
-            if config.DEBUG in ('1', '2'):
+            if DEBUG in ('1', '2'):
                 print "* Other Screenshots Window - success"
         except:
             oops = wx.MessageDialog(None, 'Demo not specified or cannot find reliable screenshots.', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
             oops.ShowModal()
             # This piece of shit generates traceback required to prevent opening "Other Screenshots" window
-            self.OnClose('DO NOT OPEN THIS FUCKING WINDOW >.<')
-            if config.DEBUG in ('1', '2'):
+            self.OnClose('DO NOT OPEN THIS F***ING WINDOW >.<')
+            if DEBUG in ('1', '2'):
                 print '[ERR] No demo specified or cannot find reliable screenshots. Supress "Other Screenshots" window'
                 print '[ERR] Other Screenshots - fail'
             
     def OnClose(self, event):
         self.MakeModal(False)
         event.Skip()
-        print "* Other Screenshots Window - closed"
+        if DEBUG in ('1', '2'):
+            print "* Other Screenshots Window - closed"
         
     def OnSelect(self, event):
-        index = event.GetItem()
-        #demoname = self.screenlist.GetItem(index)
-        print 'index:', func.demoname(timed)
-        sshot = wx.Image(func.demoscreen(func.demoname(timed)), wx.BITMAP_TYPE_JPEG).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        index = event.GetIndex()
+        print index
+        if DEBUG in ('1', '2'):
+            print 'Demoname in "All Screenshots":', func.demoname(timed)
+        sshot = wx.Image(self.scrlist[index], wx.BITMAP_TYPE_JPEG).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)

@@ -3,3 +3,9 @@
 # 1 - simple debug
 # 2 - VEEEEEEEERY HARD debug
 DEBUG = '1'
+
+# Path where screenshots will be copied
+SCREENEXPORT = 'fixme'
+
+# Path where demos archive will be copied
+DEMOEXPORT = 'fixme'
