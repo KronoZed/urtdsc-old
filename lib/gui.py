@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, wx, func, platform, glob, time, config
+import os, sys, func, platform, glob, time, config
+try:
+    import wx
+    print "* wxWidgets module loaded"
+except:
+    print "! Cannot load wxWidgets module! (Re)Install wxpython, please!"
+    exit(101)
+
 from wx.lib.wordwrap import wordwrap
 
 # Set some variables
@@ -99,10 +106,10 @@ class MainWindow(wx.Frame):
             print "[to func] Sending demo time:", timed
         a.SetLabel(label='Demo name: ' + func.demoname(timed))
         b.SetLabel(label='Nickname: ' + func.demonick(func.demoname(timed)))
-        c.SetLabel(label='Screenshot: \n' + str(func.demoscreens(func.demoname(timed))[0]))
-        if DEBUG in ('1', '2'):
-            print "* Screenshot: " + str(func.demoscreens(func.demoname(timed))[0])
         try:
+            c.SetLabel(label='Screenshot: \n' + str(func.demoscreens(func.demoname(timed))[0]))
+            if DEBUG in ('1', '2'):
+                print "* Screenshot: " + str(func.demoscreens(func.demoname(timed))[0])
             if str(func.demoscreens(func.demoname(timed))) != None or str(func.demoscreens(func.demoname(timed))) != "None":
                 print func.demoscreens(func.demoname(timed))[0]
                 sshot = wx.Image(func.demoscreens(func.demoname(timed))[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
@@ -112,7 +119,10 @@ class MainWindow(wx.Frame):
                 self.screenshot.SetBitmap(sshot)
                 print "Can't set screen!"
         except:
-            pass
+            c.SetLabel(label='Screenshot: \nNo screenshot')
+            sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
+            self.screenshot.SetBitmap(sshot)
+            print "Can't set screen!"
     
     def nodemosfound(self):
         achtung = wx.MessageDialog(None, 'Demos not found', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)

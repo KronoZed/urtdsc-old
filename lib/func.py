@@ -56,24 +56,12 @@ def demoname(timed):
 
 def demoscreen(d):
     try:
-        dday = time.strftime("%d", time.localtime(os.path.getmtime(path + d))).lstrip('0')
-        dmonth = time.strftime("%m", time.localtime(os.path.getmtime(path + d))).lstrip('0')
-        dhour = time.strftime("%H", time.localtime(os.path.getmtime(path + d))).lstrip('0')
-        dmin = time.strftime("%M", time.localtime(os.path.getmtime(path + d))).lstrip('0')
         for screen in screenpath:
-            sday = time.strftime("%d", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
-            smonth = time.strftime("%m", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
-            shour = time.strftime("%H", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
-            smin = time.strftime("%M", time.localtime(os.path.getmtime(spath + screen))).lstrip('0')
-            if dday == sday:
-                if dmonth == smonth:
-                    if dhour == shour:
-                        if dmin == smin:
-                            scr = spath + screen
-                            if scr:
-                                return str(scr)
-                            else:
-                                return None
+            if screenrealdate(screen) > demorealdate(d) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
+                scr = spath + screen
+                return str(scr)
+            else:
+                return None
     except:
         return "None"
 
@@ -81,7 +69,7 @@ def demoscreens(demoname):
     scraddr = []
     for screen in screenpath:
         #scrtimerange = datetime.datetime.fromtimestamp(os.path.getmtime(path + demoname)) - datetime.timedelta(minutes=40)
-        if screenrealdate(screen) > demorealdate(demoname) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 40:
+        if screenrealdate(screen) > demorealdate(demoname) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
             scr = spath + screen
             scraddr.append(scr)
     return scraddr
