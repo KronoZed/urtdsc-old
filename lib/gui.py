@@ -16,8 +16,6 @@ try:
         DEBUG = config.DEBUG
 except:
     DEBUG = '0'
-    
-scraddr = []
 
 class MainWindow(wx.Frame):
     def __init__(self, parent):
@@ -63,10 +61,11 @@ class MainWindow(wx.Frame):
         self.screenshot.SetBitmap(sshot)
         
         wx.StaticBox(self.panel, -1, pos=(205, 500), size=(550, 60))
-        wx.Button(self.panel, -1, "Create demos archive...", pos=(213, 518))
+        createdemos = wx.Button(self.panel, -1, "Create demos archive...", pos=(213, 518))
         wx.Button(self.panel, -1, "Copy Screenshots to Desktop", pos=(405, 518))
         otherscreens = wx.Button(self.panel, -1, "All screenshots...", pos=(630, 518), style=wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self.others, otherscreens)
+        self.Bind(wx.EVT_BUTTON, self.createdemos, createdemos)
         
         if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/screenshots')):
             nosshots = '0'
@@ -141,11 +140,16 @@ class MainWindow(wx.Frame):
         otherscreenshots = OtherScreens(self)
         otherscreenshots.Show()
         otherscreenshots.MakeModal(True)
+        
+    def createdemos(self, event):
+        demosarc = CreateDemosArchive(self)
+        demosarc.Show()
+        demosarc.MakeModal(True)
 
     def AboutDlg(self, event):
         info = wx.AboutDialogInfo()
         info.Name = "Urban Terror Demo-Screenshot C0nc4t3n4t0r"
-        info.Version = "0.2-rc1"
+        info.Version = "0.2-rc2"
         info.Copyright = "(C) 2011, Stanislav N. aka p0z1tr0n"
         info.Description = wordwrap(
             "This tool is intended for concatenate demos and screenshots of Urban Terror game. It shows demos list, date the demo was recorded, player nickname used and a screenshot.\n\nPython version: " + str(platform.python_version()) + "\nwxWidgets version: " + str(wx.version()),
@@ -161,12 +165,12 @@ class OtherScreens(wx.Frame):
         OtherScreens.SetSizeHints(self, 700, 450, 700, 450)
         self.panel = wx.Panel(self, -1)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
-        print scraddr
+        #print scraddr
         
         try:
             # Screenshots list
             self.screenlist = wx.ListCtrl(self.panel, size=(155,390), style=wx.LC_REPORT)
-            self.screenlist.InsertColumn(0, 'Screenshot', width=155)
+            self.screenlist.InsertColumn(0, 'Screenshot', width=155, format=wx.LIST_FORMAT_CENTER)
             self.screenlist.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnSelect)
             
             # Lonely button :-)
@@ -180,8 +184,6 @@ class OtherScreens(wx.Frame):
             self.sslist = wx.ImageList(150, 150)
             if DEBUG in ('1', '2'):
                 print '* Demo date is:', timed
-            #i = wx.Image(func.demoscreen(demoname), wx.BITMAP_TYPE_JPEG).Scale(150, 150, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-            #i = func.demoscreen(func.demoname(timed))
             
             self.scrlist = func.demoscreens(func.demoname(timed))
             index = 0
@@ -223,3 +225,41 @@ class OtherScreens(wx.Frame):
             print 'Demoname in "All Screenshots":', func.demoname(timed)
         sshot = wx.Image(self.scrlist[index], wx.BITMAP_TYPE_JPEG).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)
+
+class CreateDemosArchive(wx.Frame):
+    def __init__(self, parent):
+        wx.Frame.__init__(self, parent, title="UrTDSC - Create demos archive", size=(700, 580))
+        CreateDemosArchive.SetSizeHints(self, 700, 580, 700, 580)
+        self.panel = wx.Panel(self, -1)
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
+        wx.StaticText(self.panel, -1, "Demos that will be archived are listed on left side. Demos that was completed in 40 minutes range are listed on right side.", pos=(5, 5), size=(620, 35))
+        wtfb = wx.Button(self.panel, -1, "WTF?", pos=(610, 5))
+        self.Bind(wx.EVT_BUTTON, self.wtf, wtfb)
+        
+        self.dmtoarc = wx.ListBox(self.panel, 26, pos=(15, 55), size=(270, 200), style=wx.LB_SINGLE)
+        self.dmlist = wx.ListBox(self.panel, 26, pos=(415, 55), size=(270, 200), style=wx.LB_SINGLE)
+        wx.Button(self.panel, -1, "<< Add", pos=(307, 54))
+        wx.Button(self.panel, -1, "Remove >>", pos=(307, 227))
+        
+        wx.StaticLine(self.panel, -1, pos=(5, 260), size=(690, 5))
+        wx.StaticLine(self.panel, -1, pos=(350, 265), size=(5, 200), style=wx.LI_VERTICAL)
+        wx.StaticLine(self.panel, -1, pos=(5, 470), size=(690, 5))
+        
+        wx.StaticText(self.panel, -1, "Ready to create archive...", pos=(5, 480), size=(620, 35))
+        wx.Gauge(self.panel, -1, 100, pos=(5, 505), size=(690,15))
+        wx.Button(self.panel, -1, "Create archive!", pos=(300, 535))
+        
+        
+        self.CenterOnParent()
+        if DEBUG in ('1', '2'):
+            print "* Demos Window - success"
+        
+    def OnClose(self, event):
+        self.MakeModal(False)
+        event.Skip()
+        if DEBUG in ('1', '2'):
+            print "* Demos Window - closed"
+            
+    def wtf(self, event):
+        wtf = wx.MessageDialog(None, 'This means, that UrTDSC can fail with creating list of demos.\n\nOn the left - demos that will be added to archive.\n\nOn the right - demos, that in 40 minutes range and will not be added to archive.\n\nUnder these lists - short demo information. Select demo to get it.', 'UrTDSC - WTF IS THAT?', wx.OK | wx.ICON_INFORMATION)
+        wtf.ShowModal()
