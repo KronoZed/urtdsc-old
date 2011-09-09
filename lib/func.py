@@ -3,7 +3,10 @@ import os, time, config, datetime
 #Variables
 path = os.path.expanduser('~/.q3a/q3ut4/demos/')
 spath = os.path.expanduser('~/.q3a/q3ut4/screenshots/')
-screenpath = os.listdir(spath)
+try:
+    screenpath = os.listdir(spath)
+except:
+    pass
 
 def demodate(demo):
     try:

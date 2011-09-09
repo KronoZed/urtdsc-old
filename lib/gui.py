@@ -33,7 +33,12 @@ class MainWindow(wx.Frame):
         
         #Listbox with available self.demos
         self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 571), style=wx.LB_SINGLE)
-                
+
+        if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/demos')):
+            pass
+        else:
+            nodemos = '1'
+                        
         try:
             path = os.path.expanduser('~/.q3a/q3ut4/demos')
             self.date_file_list = []
@@ -62,7 +67,8 @@ class MainWindow(wx.Frame):
         
         wx.StaticBox(self.panel, -1, pos=(205, 500), size=(550, 60))
         createdemos = wx.Button(self.panel, -1, "Create demos archive...", pos=(213, 518))
-        wx.Button(self.panel, -1, "Copy Screenshots to Desktop", pos=(405, 518))
+        # Will not implement it in main window, maybe...
+        #wx.Button(self.panel, -1, "Copy Screenshots to Desktop", pos=(405, 518))
         otherscreens = wx.Button(self.panel, -1, "All screenshots...", pos=(630, 518), style=wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self.others, otherscreens)
         self.Bind(wx.EVT_BUTTON, self.createdemos, createdemos)
@@ -232,7 +238,7 @@ class CreateDemosArchive(wx.Frame):
         CreateDemosArchive.SetSizeHints(self, 700, 580, 700, 580)
         self.panel = wx.Panel(self, -1)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
-        wx.StaticText(self.panel, -1, "Demos that will be archived are listed on left side. Demos that was completed in 40 minutes range are listed on right side.", pos=(5, 5), size=(620, 35))
+        wx.StaticText(self.panel, -1, "Demos that will be archived are listed on left side. Demos that was completed in 40 minutes range of selected demo in main window are listed on right side.", pos=(5, 5), size=(600, 35))
         wtfb = wx.Button(self.panel, -1, "WTF?", pos=(610, 5))
         self.Bind(wx.EVT_BUTTON, self.wtf, wtfb)
         
