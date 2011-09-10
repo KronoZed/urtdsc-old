@@ -91,12 +91,10 @@ class MainWindow(wx.Frame):
         self.CenterOnParent()
         self.Show(True)
         print '* Debug is:', DEBUG
-        if DEBUG in ('1', '2'):
-            print "* Main window - success"
+        func.log('1', "Main Window - success")
         
     def exitapp(self, event):
-        if DEBUG in ('1', '2'):
-            print ">> Exiting urtdsc..."
+        func.log('1', "*** Exiting UrTDSC... ***")
         self.Close(True)
 
     def OnSelect(self, event):
@@ -107,27 +105,25 @@ class MainWindow(wx.Frame):
         a = self.demoname
         b = self.nickname
         c = self.sshotaddr
-        if DEBUG in ('1', '2'):
-            print "[to func] Sending demo time:", timed
+        func.log('2', "[to func] Sending demo time: %s" % timed)
         a.SetLabel(label='Demo name: ' + func.demoname(timed))
         b.SetLabel(label='Nickname: ' + func.demonick(func.demoname(timed)))
         try:
             c.SetLabel(label='Screenshot: \n' + str(func.demoscreens(func.demoname(timed))[0]))
             if DEBUG in ('1', '2'):
-                print "* Screenshot: " + str(func.demoscreens(func.demoname(timed))[0])
+                func.log('1', "Screenshot: %s" % str(func.demoscreens(func.demoname(timed))[0]))
             if str(func.demoscreens(func.demoname(timed))) != None or str(func.demoscreens(func.demoname(timed))) != "None":
-                print func.demoscreens(func.demoname(timed))[0]
                 sshot = wx.Image(func.demoscreens(func.demoname(timed))[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
             else:
                 sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
-                print "Can't set screen!"
+                func.log('1', "Failed to set a screenshot!")
         except:
             c.SetLabel(label='Screenshot: \nNo screenshot')
             sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
             self.screenshot.SetBitmap(sshot)
-            print "Can't set screen!"
+            func.log('1', "No reliable screenshot(s) found")
     
     def nodemosfound(self):
         achtung = wx.MessageDialog(None, 'Demos not found', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
@@ -188,8 +184,7 @@ class OtherScreens(wx.Frame):
             self.screenshot.SetBitmap(sshot)
         
             self.sslist = wx.ImageList(150, 150)
-            if DEBUG in ('1', '2'):
-                print '* Demo date is:', timed
+            func.log('1', '* Demo date is: %s' % timed)
             
             self.scrlist = func.demoscreens(func.demoname(timed))
             index = 0
@@ -207,28 +202,23 @@ class OtherScreens(wx.Frame):
 
             self.CenterOnParent()
             self.Show(True)
-            if DEBUG in ('1', '2'):
-                print "* Other Screenshots Window - success"
+            func.log('1', 'Other Screenshots Window - success')
         except:
             oops = wx.MessageDialog(None, 'Demo not specified or cannot find reliable screenshots.', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)
             oops.ShowModal()
             # This piece of shit generates traceback required to prevent opening "Other Screenshots" window
             self.OnClose('DO NOT OPEN THIS F***ING WINDOW >.<')
-            if DEBUG in ('1', '2'):
-                print '[ERR] No demo specified or cannot find reliable screenshots. Supress "Other Screenshots" window'
-                print '[ERR] Other Screenshots - fail'
+            func.log('1', '[ERR] No demo specified or cannot find reliable screenshots. Supress "Other Screenshots" window')
+            func.log('1', '[ERR] Other Screenshots - fail')
             
     def OnClose(self, event):
         self.MakeModal(False)
         event.Skip()
-        if DEBUG in ('1', '2'):
-            print "* Other Screenshots Window - closed"
+        func.log('1', "Other Screenshots Window - closed")
         
     def OnSelect(self, event):
         index = event.GetIndex()
-        print index
-        if DEBUG in ('1', '2'):
-            print 'Demoname in "All Screenshots":', func.demoname(timed)
+        func.log('1','Demoname in "All Screenshots": %s' % func.demoname(timed))
         sshot = wx.Image(self.scrlist[index], wx.BITMAP_TYPE_JPEG).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)
 
@@ -257,14 +247,12 @@ class CreateDemosArchive(wx.Frame):
         
         
         self.CenterOnParent()
-        if DEBUG in ('1', '2'):
-            print "* Demos Window - success"
+        func.log('1', "Demos Window - success")
         
     def OnClose(self, event):
         self.MakeModal(False)
         event.Skip()
-        if DEBUG in ('1', '2'):
-            print "* Demos Window - closed"
+        func.log('1', "Demos Window - closed")
             
     def wtf(self, event):
         wtf = wx.MessageDialog(None, 'This means, that UrTDSC can fail with creating list of demos.\n\nOn the left - demos that will be added to archive.\n\nOn the right - demos, that in 40 minutes range and will not be added to archive.\n\nUnder these lists - short demo information. Select demo to get it.', 'UrTDSC - WTF IS THAT?', wx.OK | wx.ICON_INFORMATION)

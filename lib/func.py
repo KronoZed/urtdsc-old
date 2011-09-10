@@ -8,23 +8,28 @@ try:
 except:
     pass
 
+def log(level, text, *args, **kwargs):
+    if level in ('1', '2') and config.DEBUG in '2':
+        print "[D2]:", text
+    elif level in '1' and config.DEBUG in '1':
+        print "[D1]:", text
+    else:
+        pass
+
 def demodate(demo):
     try:
         date = time.strftime('%d-%m-%Y @ %H:%M', time.localtime(os.path.getmtime(path + demo)))
-        if config.DEBUG == '2':
-            print "[D2][func] Date:", date
+        log('2', 'Date: %s' % date)
         return str(date)
     except:
         return "None"
     
 def demorealdate(demo):
     realdate = os.path.getmtime(path + demo)
-    #print "Real Date:", realdate
     return realdate
 
 def screenrealdate(screen):
     realdate = os.path.getmtime(spath + screen)
-    #print "Real Date:", realdate
     return realdate
 
 def demonick(d):
@@ -46,12 +51,10 @@ def demonick(d):
         return "None"
 
 def demoname(timed):
-    if config.DEBUG == '2':
-        print "[func] Received demo time:", timed
+    log('2', "[func] Received demo time: %s" % timed)
     for demo in os.listdir(path):
-        if config.DEBUG == '2':
-            print "[D2][func] Demo:", demo
         if timed == demodate(demo):
+            log('2', "[func] Demo: %s" % demo)
             return demo
         else:
             pass
@@ -71,7 +74,6 @@ def demoscreen(d):
 def demoscreens(demoname):
     scraddr = []
     for screen in screenpath:
-        #scrtimerange = datetime.datetime.fromtimestamp(os.path.getmtime(path + demoname)) - datetime.timedelta(minutes=40)
         if screenrealdate(screen) > demorealdate(demoname) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
             scr = spath + screen
             scraddr.append(scr)
