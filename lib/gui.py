@@ -57,9 +57,20 @@ class MainWindow(wx.Frame):
             self.nodemosfound()
             nodemos = '1'
             
-        self.demoname = wx.StaticText(self.panel, -1, 'Demo name: ', pos=(205, 5))
-        self.nickname = wx.StaticText(self.panel, -1, 'Nickname: ', pos=(205, 25))
-        self.sshotaddr = wx.StaticText(self.panel, -1, "Screenshot:", pos=(205, 65))
+        self.demotext = wx.StaticText(self.panel, -1, "Demo: ", pos=(205, 5))
+        txtf = self.demotext.GetFont()
+        txtf.SetWeight(wx.BOLD) 
+        self.demotext.SetFont(txtf)
+        self.demoname = wx.StaticText(self.panel, -1, '', pos=(205 + self.demotext.GetSize()[0], 5))
+        self.nicktext = wx.StaticText(self.panel, -1, 'Nickname: ', pos=(205, 25))
+        self.nicktext.SetFont(txtf)
+        self.nickname = wx.StaticText(self.panel, -1, '', pos=(205 + self.nicktext.GetSize()[0], 25))
+        self.mapstext = wx.StaticText(self.panel, -1, 'Maps: ', pos=(205, 45))
+        self.mapstext.SetFont(txtf)
+        self.maps = wx.StaticText(self.panel, -1, '', pos=(205 + self.mapstext.GetSize()[0], 45))
+        self.sshottext = wx.StaticText(self.panel, -1, "Screenshot:", pos=(205, 65))
+        self.sshottext.SetFont(txtf)
+        self.sshotaddr = wx.StaticText(self.panel, -1, "", pos=(205, 85))
         
         self.screenshot = wx.StaticBitmap(self.panel, -1, pos=(205, 105), bitmap=wx.EmptyBitmap(550, 400))
         sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
@@ -105,25 +116,38 @@ class MainWindow(wx.Frame):
         a = self.demoname
         b = self.nickname
         c = self.sshotaddr
+        d = self.maps
+        maplist = []
         func.log('2', "[to func] Sending demo time: %s" % timed)
-        a.SetLabel(label='Demo name: ' + func.demoname(timed))
-        b.SetLabel(label='Nickname: ' + func.demonick(func.demoname(timed)))
+        a.SetLabel(label=func.demoname(timed))
+        b.SetLabel(label=func.demonick(func.demoname(timed)))
         try:
-            c.SetLabel(label='Screenshot: \n' + str(func.demoscreens(func.demoname(timed))[0]))
+            screens = func.demoscreens(func.demoname(timed))
+            c.SetLabel(label=str(screens[0]))
             if DEBUG in ('1', '2'):
-                func.log('1', "Screenshot: %s" % str(func.demoscreens(func.demoname(timed))[0]))
-            if str(func.demoscreens(func.demoname(timed))) != None or str(func.demoscreens(func.demoname(timed))) != "None":
-                sshot = wx.Image(func.demoscreens(func.demoname(timed))[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                func.log('1', "Screenshot: %s" % str(screens[0]))
+            if str(screens[0]) != None or str(screens[0]) != "None":
+                sshot = wx.Image(screens[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
             else:
                 sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
                 func.log('1', "Failed to set a screenshot!")
         except:
-            c.SetLabel(label='Screenshot: \nNo screenshot')
+            c.SetLabel(label='No screenshot')
             sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
             self.screenshot.SetBitmap(sshot)
             func.log('1', "No reliable screenshot(s) found")
+            
+        for scr in screens:
+            scrs = scr.split("_")
+            if scrs[1] in ('TOHUNGA', 'ORBITAL'):
+                maplist.append(scrs[1] + "_" + scrs[2])
+            else:
+                maplist.append(scrs[1])
+        
+        items = ", ".join(maplist).lower()
+        d.SetLabel(items)
     
     def nodemosfound(self):
         achtung = wx.MessageDialog(None, 'Demos not found', 'UrTDSC - Error!', wx.OK | wx.ICON_EXCLAMATION)

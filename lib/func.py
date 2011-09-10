@@ -63,7 +63,7 @@ def demoname(timed):
 def demoscreen(d):
     try:
         for screen in screenpath:
-            if screenrealdate(screen) > demorealdate(d) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
+            if screenrealdate(screen) > demorealdate(d) - 60 * 30 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
                 scr = spath + screen
                 return str(scr)
             else:
@@ -74,7 +74,7 @@ def demoscreen(d):
 def demoscreens(demoname):
     scraddr = []
     for screen in screenpath:
-        if screenrealdate(screen) > demorealdate(demoname) - 60 * 40 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
+        if screenrealdate(screen) > demorealdate(demoname) - 60 * 30 and screenrealdate(screen) < demorealdate(demoname) + 60 * 20:
             scr = spath + screen
             scraddr.append(scr)
     return scraddr
