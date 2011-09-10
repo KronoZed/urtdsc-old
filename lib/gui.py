@@ -77,12 +77,15 @@ class MainWindow(wx.Frame):
         self.screenshot.SetBitmap(sshot)
         
         wx.StaticBox(self.panel, -1, pos=(205, 500), size=(550, 60))
-        createdemos = wx.Button(self.panel, -1, "Create demos archive...", pos=(213, 518))
+        createdemos = wx.Button(self.panel, -1, "Copy demo to desktop", pos=(213, 518))
         # Will not implement it in main window, maybe...
         #wx.Button(self.panel, -1, "Copy Screenshots to Desktop", pos=(405, 518))
         otherscreens = wx.Button(self.panel, -1, "All screenshots...", pos=(630, 518), style=wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self.others, otherscreens)
-        self.Bind(wx.EVT_BUTTON, self.createdemos, createdemos)
+        
+        # TODO: implement it in 0.3 :-)
+        #self.Bind(wx.EVT_BUTTON, self.createdemos, createdemos)
+        self.Bind(wx.EVT_BUTTON, self.copydemos, createdemos)
         
         if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/screenshots')):
             nosshots = '0'
@@ -127,7 +130,10 @@ class MainWindow(wx.Frame):
             if DEBUG in ('1', '2'):
                 func.log('1', "Screenshot: %s" % str(screens[0]))
             if str(screens[0]) != None or str(screens[0]) != "None":
-                sshot = wx.Image(screens[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                try:
+                    sshot = wx.Image(screens[0], wx.BITMAP_TYPE_JPEG).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                except:
+                    sshot = wx.Image(screens[0], wx.BITMAP_TYPE_TGA).Scale(550, 400, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.screenshot.SetBitmap(sshot)
             else:
                 sshot = wx.EmptyImage(550, 400).ConvertToBitmap()
@@ -171,11 +177,14 @@ class MainWindow(wx.Frame):
         demosarc = CreateDemosArchive(self)
         demosarc.Show()
         demosarc.MakeModal(True)
+        
+    def copydemos(self, event):
+        func.copyfile(os.path.expanduser("~/" + config.URT_FOLDER + "/q3ut4/demos/") + func.demoname(timed))
 
     def AboutDlg(self, event):
         info = wx.AboutDialogInfo()
         info.Name = "Urban Terror Demo-Screenshot C0nc4t3n4t0r"
-        info.Version = "0.2-rc2"
+        info.Version = "0.2"
         info.Copyright = "(C) 2011, Stanislav N. aka p0z1tr0n"
         info.Description = wordwrap(
             "This tool is intended for concatenate demos and screenshots of Urban Terror game. It shows demos list, date the demo was recorded, player nickname used and a screenshot.\n\nPython version: " + str(platform.python_version()) + "\nwxWidgets version: " + str(wx.version()),
@@ -200,7 +209,8 @@ class OtherScreens(wx.Frame):
             self.screenlist.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnSelect)
             
             # Lonely button :-)
-            wx.Button(self.panel, -1, "Copy Screenshot to\nDesktop", pos=(10, 396))
+            cpscrs = wx.Button(self.panel, -1, "Copy Screenshots to\nDesktop", pos=(10, 396))
+            self.Bind(wx.EVT_BUTTON, self.CopyToDesktop, cpscrs)
             
             #Screenshot
             self.screenshot = wx.StaticBitmap(self.panel, -1, pos=(156, 0), bitmap=wx.EmptyBitmap(544, 452))
@@ -214,7 +224,10 @@ class OtherScreens(wx.Frame):
             index = 0
             self.idx = 0
             for i in self.scrlist:
-                scr1 = wx.Image(i, wx.BITMAP_TYPE_JPEG).Scale(150, 150, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                try:
+                    scr1 = wx.Image(i, wx.BITMAP_TYPE_JPEG).Scale(150, 150, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                except:
+                    scr1 = wx.Image(i, wx.BITMAP_TYPE_TGA).Scale(150, 150, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.sslist.Add(scr1)
                 self.index = self.screenlist.InsertStringItem(self.idx, '', self.idx)
                 self.screenlist.SetItemImage(1, self.index, self.index)
@@ -243,8 +256,15 @@ class OtherScreens(wx.Frame):
     def OnSelect(self, event):
         index = event.GetIndex()
         func.log('1','Demoname in "All Screenshots": %s' % func.demoname(timed))
-        sshot = wx.Image(self.scrlist[index], wx.BITMAP_TYPE_JPEG).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        try:
+            sshot = wx.Image(self.scrlist[index], wx.BITMAP_TYPE_JPEG).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        except:
+            sshot = wx.Image(self.scrlist[index], wx.BITMAP_TYPE_TGA).Scale(544, 452, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         self.screenshot.SetBitmap(sshot)
+        
+    def CopyToDesktop(self, event):
+        for screen in self.scrlist:
+            func.copyfile(screen)
 
 class CreateDemosArchive(wx.Frame):
     def __init__(self, parent):

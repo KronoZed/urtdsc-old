@@ -9,3 +9,6 @@ SCREENEXPORT = 'fixme'
 
 # Path where demos archive will be copied
 DEMOEXPORT = 'fixme'
+
+# Folder with user-specific data, like downloaded maps, screenshots and demos
+URT_FOLDER = '.q3a'

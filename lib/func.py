@@ -1,8 +1,8 @@
-import os, time, config, datetime
+import os, time, config, datetime, shutil
 
 #Variables
-path = os.path.expanduser('~/.q3a/q3ut4/demos/')
-spath = os.path.expanduser('~/.q3a/q3ut4/screenshots/')
+path = os.path.expanduser('~/' + config.URT_FOLDER + '/q3ut4/demos/')
+spath = os.path.expanduser('~/' + config.URT_FOLDER + '/q3ut4/screenshots/')
 try:
     screenpath = os.listdir(spath)
 except:
@@ -78,3 +78,10 @@ def demoscreens(demoname):
             scr = spath + screen
             scraddr.append(scr)
     return scraddr
+
+def copyfile(filename):
+    try:
+        log('1', 'Copying file: %s' % filename)
+        shutil.copy(filename, os.path.expanduser("~/Desktop"))
+    except:
+        log('1', 'Failed to copy %s' % filename)
