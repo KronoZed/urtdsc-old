@@ -11,4 +11,5 @@ SCREENEXPORT = 'fixme'
 DEMOEXPORT = 'fixme'
 
 # Folder with user-specific data, like downloaded maps, screenshots and demos
+# For Linux usually this is .q3a, for MacOS - Quake3
 URT_FOLDER = '.q3a'

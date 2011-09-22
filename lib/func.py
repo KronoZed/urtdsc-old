@@ -1,8 +1,27 @@
 import os, time, config, datetime, shutil
 
+
+# OS Detector ;)
+def osdetect():
+    import commands
+    osname = commands.getoutput('uname')
+    if osname == 'Linux':
+        return 0
+    elif osname == 'Darwin':
+        return 1
+    else:
+        print 'Unsupported OS, sorry'
+        exit(200)
+
 #Variables
-path = os.path.expanduser('~/' + config.URT_FOLDER + '/q3ut4/demos/')
-spath = os.path.expanduser('~/' + config.URT_FOLDER + '/q3ut4/screenshots/')
+osname = osdetect()
+if osname == 0:
+    path = os.path.expanduser('~/' + config.URT_FOLDER + '/q3ut4/demos/')
+    spath = os.path.expanduser('~/' + config.URT_FOLDER + '/q3ut4/screenshots/')
+elif osname == 1:
+    path = os.path.expanduser('~/Library/Application Support/' + config.URT_FOLDER + '/q3ut4/demos/')
+    spath = os.path.expanduser('~/Library/Application Support/' + config.URT_FOLDER + '/q3ut4/screenshots/')
+
 try:
     screenpath = os.listdir(spath)
 except:

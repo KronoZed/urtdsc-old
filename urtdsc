@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, sys, wx
+import os, sys
 try:
     import wx
     print "* wxWidgets module loaded"

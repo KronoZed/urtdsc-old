@@ -34,15 +34,14 @@ class MainWindow(wx.Frame):
         #Listbox with available self.demos
         self.demos = wx.ListBox(self.panel, 26, wx.DefaultPosition, (200, 571), style=wx.LB_SINGLE)
 
-        if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/demos')):
+        if os.path.exists(func.path):
             pass
         else:
             nodemos = '1'
                         
         try:
-            path = os.path.expanduser('~/.q3a/q3ut4/demos')
             self.date_file_list = []
-            for file in glob.glob(path + "/*.dm_68"):
+            for file in glob.glob(func.path + "/*.dm_68"):
                 stats = os.stat(file)
                 lastmod_date = time.localtime(stats[8])
                 date_file_tuple = lastmod_date, file
@@ -87,7 +86,7 @@ class MainWindow(wx.Frame):
         #self.Bind(wx.EVT_BUTTON, self.createdemos, createdemos)
         self.Bind(wx.EVT_BUTTON, self.copydemos, createdemos)
         
-        if os.path.exists(os.path.expanduser('~/.q3a/q3ut4/screenshots')):
+        if os.path.exists(func.spath):
             nosshots = '0'
         else:
             self.nosshotsfound()
@@ -179,7 +178,7 @@ class MainWindow(wx.Frame):
         demosarc.MakeModal(True)
         
     def copydemos(self, event):
-        func.copyfile(os.path.expanduser("~/" + config.URT_FOLDER + "/q3ut4/demos/") + func.demoname(timed))
+        func.copyfile(func.path + func.demoname(timed))
 
     def AboutDlg(self, event):
         info = wx.AboutDialogInfo()
